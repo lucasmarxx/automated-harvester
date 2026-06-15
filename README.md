@@ -8,10 +8,11 @@
 
 Entrar no site - https://www.olx.com.br/estado-df
 
-1. Fazer pesquisa de casas em X localidade
-2. Filtrar valores
-3. Filtrar quantidade de quartos
-4. Realizar a busca em até 3 páginas seguintes
-5. Testar se a resposta das buscas é a correta
-6. Guardar informações em uma base de dados NoSQL (MongoDB)
-7. 
+1. Fazer pesquisa de casas em X localidade;
+2. Filtrar para apenas CASAS;
+3. Filtrar quantidade de quartos;
+4. Testar a resposta das buscas e filtros;
+5. Continuar a busca para até 03 páginas seguintes
+6. Passar informações para um arquivo JSON
+7. Importar informações em uma base de dados NoSQL (MongoDB)
+8. 
