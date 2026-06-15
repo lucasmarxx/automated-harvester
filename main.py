@@ -44,11 +44,11 @@ if filtro_apenas_casas:
 filtro_quartos = driver.find_element(By.XPATH, "//label[@for = 'chips-id-rooms-3']")
 
 ActionChains(driver).scroll_to_element(filtro_quartos).perform()
-time.sleep(1)
+time.sleep(2)
 
 if filtro_quartos:
     filtro_quartos.click()
-    time.sleep(3)
+    time.sleep(2)
 
 filtro_valor_min = driver.find_element(By.XPATH, "//input[@id = 'price_min']") 
 filtro_valor_max = driver.find_element(By.XPATH, "//input[@id = 'price_max']")
@@ -67,26 +67,14 @@ botao_pesquisa_filtrado = driver.find_element(By.XPATH, "//button[@class = 'olx-
 botao_pesquisa_filtrado.click()
 
 time.sleep(5)
-# botao_pagina_seguinte = driver.find_element(By.XPATH, "//*[contains(text(), 'Próxima página')]")
 
 nomes_casas = driver.find_elements(By.XPATH, "//a[@class='olx-adcard__link']")
 valores_casas = driver.find_elements(By.XPATH, "//h3[@class = 'typo-body-large olx-adcard__price font-semibold']")
 
-lista_teste = []
+
 
 for nome, valor in zip(nomes_casas, valores_casas):
     with open('precos.csv', 'a', encoding='utf8') as arquivo:
         arquivo.write(f'{nome.text}, {valor.text}{os.linesep}')
 
-# print(lista_teste)
-
-# for nome, valor in zip(nomes_casas, valores_casas):
-#     with open('precos.csv', 'a', encoding='utf8') as arquivo:
-#         arquivo.write(f'{nome.text}, {valor.text}, {os.linesep}')
-
-# if botao_pagina_seguinte:
-#     try:
-#         botao_pagina_seguinte.click()
-#     except TimeoutException:
-        # pass
 input('') # para o site nao fechar imediatamente
