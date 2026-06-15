@@ -13,6 +13,7 @@ Entrar no site - https://www.olx.com.br/estado-df
 3. Filtrar quantidade de quartos;
 4. Testar a resposta das buscas e filtros;
 5. Continuar a busca para até 03 páginas seguintes
-6. Passar informações para um arquivo JSON
-7. Importar informações em uma base de dados NoSQL (MongoDB)
-8. 
+6. Passar informações para um arquivo csv
+7. Tratar os dados para importação
+8. Importar informações em uma base de dados NoSQL (MongoDB)
+9. 
