@@ -32,8 +32,16 @@ filtro_aluguel_casa_apto.click()
 
 time.sleep(5)
 
+filtro_apenas_casas = driver.find_element(By.XPATH, "//*[contains(text(), 'Casas para alugar')]")
+if filtro_apenas_casas:
+    filtro_apenas_casas.click()
+
+time.sleep(3)
+
 filtro_quartos = driver.find_element(By.XPATH, "//label[@for = 'chips-id-rooms-3']")
-filtro_quartos.click()
+
+if filtro_quartos:
+    filtro_quartos.click()
 
 filtro_valor_min = driver.find_element(By.XPATH, "//input[@id = 'price_min']") 
 if filtro_valor_min:
@@ -48,7 +56,10 @@ if filtro_valor_max:
     filtro_valor_max.send_keys('4000')
 
 
-time.sleep(5)
+time.sleep(2)
+
+botao_pesquisa_filtrado = driver.find_element(By.XPATH, "//button[@class = 'olx-core-button olx-core-button--primary olx-core-button--small olx-core-button--only-icon FilterButton_filterButton__1P_j9']")
+botao_pesquisa_filtrado.click()
 
 
 input('') # para o site nao fechar imediatamente
