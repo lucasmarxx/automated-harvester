@@ -23,21 +23,22 @@ driver.get("https://www.olx.com.br/estado-df")
 
 # Montando XPATHs (identificadores de elementos)
 
-# pesquisa = driver.find_element(
-#     By.XPATH,
-#     "//input[@class='olx-core-input-textarea-element olx-core-input-element olx-core-input-textarea-element--default']"
-#     )
+pesquisa = driver.find_element(
+    By.XPATH,
+    "//input[@class='olx-core-input-textarea-element olx-core-input-element olx-core-input-textarea-element--default']"
+    )
 
-pesquisa_wait = WebDriverWait(driver, 20). until(
-    EC.visibility_of_element_located(By.XPATH,
-    "//input[@class='olx-core-input-textarea-element olx-core-input-element olx-core-input-textarea-element--default']")
-)
-if pesquisa_wait:
-    pesquisa_wait.click()
-    pesquisa_wait.send_keys("Aluguel de casa gama")
-    # time.sleep(2)
-    pesquisa_wait.send_keys(Keys.RETURN)
-    # time.sleep(2)
+# pesquisa_wait = WebDriverWait(driver, 20). until(
+#     EC.visibility_of_element_located(By.XPATH,
+#     "//input[@class='olx-core-input-textarea-element olx-core-input-element olx-core-input-textarea-element--default']")
+# )
+
+if pesquisa:
+    pesquisa.click()
+    pesquisa.send_keys("Aluguel de casa gama")
+    time.sleep(2)
+    pesquisa.send_keys(Keys.RETURN)
+    time.sleep(2)
 
 filtro_aluguel_casa_apto = driver.find_element(
     By.XPATH, "//p[contains(text(), 'Aluguel')]"
