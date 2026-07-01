@@ -10,6 +10,7 @@ from selenium.webdriver.common.action_chains import ActionChains
 
 import time
 import os
+import copy
 
 options = Options()
 options.add_argument("--start-maximized")
@@ -92,6 +93,6 @@ valores_casas = driver.find_elements(
 
 for nome, valor in zip(nomes_casas, valores_casas):
     with open("precos.csv", "a", encoding="utf8") as arquivo:
-        arquivo.write(f"{nome.text}, {valor.text}{os.linesep}")
+        arquivo.write(f"{nome.text.split()[0]}, {valor.text}{os.linesep}")
 
 input("")  # para o site nao fechar imediatamente
