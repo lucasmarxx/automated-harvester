@@ -7,10 +7,13 @@ from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.common.actions.wheel_input import ScrollOrigin
 from selenium.webdriver.common.action_chains import ActionChains
+from pymongo import MongoClient
 
 import time
 import os
-import copy
+import csv
+
+
 
 options = Options()
 options.add_argument("--start-maximized")
@@ -93,6 +96,26 @@ valores_casas = driver.find_elements(
 
 for nome, valor in zip(nomes_casas, valores_casas):
     with open("precos.csv", "a", encoding="utf8") as arquivo:
-        arquivo.write(f"{nome.text.split()[0]}, {valor.text}{os.linesep}")
+        arquivo.write(f"{nome.text.split()[0]},{"".join(valor.text.split())}\n") #{os.linesep} 
 
-input("")  # para o site nao fechar imediatamente
+
+client = MongoClient('mongodb://localhost:27017')
+db = client['Dados_OLX']
+colecao = db['colecao_busca_olx']
+
+with open('precos.csv', 'r', encoding = 'utf-8') as arquivo:
+    leitor = csv.reader(arquivo)
+
+    dados = []
+    for linha in leitor:
+        documento = {
+            'nome': linha[0],
+            'valor': linha[1]
+        }
+        dados.append(documento)
+
+if dados:
+    colecao.insert_many(dados)
+    print('caralho')
+
+input("") # para o site nao fechar imediatamente
