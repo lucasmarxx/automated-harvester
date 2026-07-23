@@ -153,18 +153,29 @@ class BuscarCasa:
 
     # CLICA NOS FILTROS DE VALOR MAX E VALOR MIN #
     def filtro_valores(self, valor_min, valor_max):
-        filtro_valor_min = self.driver.find_element(By.XPATH, "//input[@id = 'price_min']")
-        filtro_valor_max = self.driver.find_element(By.XPATH, "//input[@id = 'price_max']")
+        try:
+            filtro_valor_min = self.wait.until(
+                EC.element_to_be_clickable((
+                By.XPATH, "//input[@id = 'price_min']"))
+                )
+            filtro_valor_max = self.wait.until(
+                EC.element_to_be_clickable((
+                By.XPATH, "//input[@id = 'price_max']"))
+                )
 
-        if filtro_valor_min:
-            filtro_valor_min.click()
             filtro_valor_min.send_keys(valor_min)
-            time.sleep(2)
-
-        if filtro_valor_max:
-            filtro_valor_max.click()
+            print(f'Valor mínimo >>{valor_min}<< adicionado ao filtro')
+            time.sleep(1)
             filtro_valor_max.send_keys(valor_max)
-            time.sleep(2)
+            print(f'Valor maximo >>{valor_max}<< adicionado ao filtro')
+            time.sleep(10)
+            
+        except TimeoutException as e:
+            print(f'Timeout ao filtrar valor: {e}')
+            return False
+        except Exception as e:
+            print(f'Erro ao filtrar valores: {e}')
+
 
     # ---------------------------------------------------------------- #
 
