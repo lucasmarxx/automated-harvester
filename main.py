@@ -181,15 +181,23 @@ class BuscarCasa:
 
     # CLICA NA PESQUISA APÓS FILTROS SEREM PREENCHIDOS #
     def botao_pesquisa_final(self):
-            
-        botao_pesquisa_filtrado = self.driver.find_element(
-            By.XPATH,
-            "//button[@class = 'olx-core-button olx-core-button--primary olx-core-button--small olx-core-button--only-icon FilterButton_filterButton__1P_j9']",
-        )
-        botao_pesquisa_filtrado.click()
+        try:    
+            botao_pesquisa_filtrado = self.wait.until(
+                EC.presence_of_element_located((
+                By.XPATH,
+                "//button[@class = 'olx-core-button olx-core-button--primary olx-core-button--small olx-core-button--only-icon FilterButton_filterButton__1P_j9']",
+                ))
+                )
+            botao_pesquisa_filtrado.click()
+            print('Botão de pesquisa clicado!!')
+            time.sleep(5)
 
-        time.sleep(5)
-
+        except TimeoutException as e:
+            print(f'Timeout no botão de pesquisa: {e}')
+            return False
+        except Exception as e:
+            print(f'Erro no botão de pesquisa: {e}')
+            return False
     # ---------------------------------------------------------------- #
 
     # PEGA OS NOMES E VALORES DAS CASAS ENCONTRADAS #
