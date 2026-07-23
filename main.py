@@ -26,110 +26,142 @@ class BuscarCasa:
         self._valor_min = None
         self._valor_max = None
 
-    options = Options()
-    options.add_argument("--start-maximized")
-    # options.page_load_strategy = 'eager'
+        options = Options()
+        options.add_argument("--start-maximized")
 
-    driver = webdriver.Chrome(options=options)
-
-
-    driver.get("https://www.olx.com.br/estado-df")
-
-
+        self.driver = webdriver.Chrome(options=options)
+        self.driver.get("https://www.olx.com.br/estado-df")
+        self.timeout = 10
     # Montando XPATHs (identificadores de elementos)
 
     # EFETUA PESQUISA NA BARRA DA OLX #
-    pesquisa = driver.find_element(
-        By.XPATH,
-        "//input[@class='olx-core-input-textarea-element olx-core-input-element olx-core-input-textarea-element--default']"
-        )
+    def pesquisa_inicial(self, busca):
+        try:
+            # Aguarda campo de pesquisa ficar clicável #
+            pesquisa = WebDriverWait(self.driver, self.timeout).until(
+                EC.element_to_be_clickable((By.XPATH,
+                "//input[@class='olx-core-input-textarea-element olx-core-input-element olx-core-input-textarea-element--default']")
+                )
+            )
+            pesquisa.clear()
+            pesquisa.send_keys(busca)
+            pesquisa.send_keys(Keys.RETURN)
 
-    # pesquisa_wait = WebDriverWait(driver, 20). until(
-    #     EC.visibility_of_element_located(By.XPATH,
-    #     "//input[@class='olx-core-input-textarea-element olx-core-input-element olx-core-input-textarea-element--default']")
-    # )
-
-    if pesquisa:
-        pesquisa.click()
-        pesquisa.send_keys("Aluguel de casa gama")
-        time.sleep(2)
-        pesquisa.send_keys(Keys.RETURN)
-        time.sleep(2)
-
+            WebDriverWait(self.driver, self.timeout).until(
+                EC.presence_of_element_located((
+                By.XPATH, "//div[contains(@class, 'result') or contains(@class, 'listing')]"
+                ))
+            )
+            print(f'pesquisa "{busca}" realizada com sucesso!')
+            return True
+        
+        except TimeoutException as e:
+            print(f'Timeout na pesquisa: {e}')
+            return False
+        
+        except Exception as e:
+            print(f'erro na pesquisa: {e}')
+            return False
     # ---------------------------------------------------------------- #
 
     # CLICA NO FILTRO RELATIVO A ALUGUEL APENAS DE CASAS #
-    filtro_aluguel_casa_apto = driver.find_element(
-        By.XPATH, "//p[contains(text(), 'Aluguel')]"
-    )
-    filtro_aluguel_casa_apto.click()
+    def filtro_casas(self):
+        try:
+            filtro_aluguel = WebDriverWait(self.driver, self.timeout).until(
+                EC.element_to_be_clickable((
+                By.XPATH, "//p[contains(text(), 'Aluguel')]")
+            ))
+            filtro_aluguel.click()
+            print('Filtro "Aluguel" clicado!')
 
-    time.sleep(2)
+            # Aguarda o submenu aparecer
+            WebDriverWait(self.driver, 5).until(
+                EC.presence_of_element_located((
+                By.XPATH, "//*[contains(text(), 'Casas para alugar')]"
+                ))
+            )
 
-    filtro_apenas_casas = driver.find_element(
-        By.XPATH, "//*[contains(text(), 'Casas para alugar')]"
-    )
-    if filtro_apenas_casas:
-        filtro_apenas_casas.click()
-        time.sleep(2)
+            # Clica no filtro 'casas para alugar'
+            filtro_apenas_casas = WebDriverWait(self.driver, self.timeout).until(
+                EC.element_to_be_clickable((
+                By.XPATH, "//*[contains(text(), 'Casas para alugar')]"
+            )))
+            filtro_apenas_casas.click()
+            print('filtro "casas para alugar" clicado!')
+
+            # Aguarda os resultados serem atualizados
+            WebDriverWait(self.driver, self.timeout).until(
+                EC.presence_of_element_located((
+                By.XPATH, "//div[contains(@class, 'result') or contains(@class, 'listing')]"
+                ))
+            )
+            return True
+        
+        except TimeoutException as e:
+            print(f'Timeout ao aplicar filtros: {e}')
+            return False
+        except Exception as e:
+            print(f'Erro ao aplicar filtros: {e}')
+            return False
 
     # ---------------------------------------------------------------- #
 
     # CLICA NO FILTRO RELATIVO À QUANTIDADE DE QUARTOS #
+    def filtrar_quartos(self):
+            
+        filtro_quartos = self.driver.find_element(By.XPATH, "//label[@for = 'chips-id-rooms-3']")
 
-    filtro_quartos = driver.find_element(By.XPATH, "//label[@for = 'chips-id-rooms-3']")
-
-    ActionChains(driver).scroll_to_element(filtro_quartos).perform()
-    time.sleep(2)
-
-    if filtro_quartos:
-        filtro_quartos.click()
+        ActionChains(self.driver).scroll_to_element(filtro_quartos).perform()
         time.sleep(2)
+
+        if filtro_quartos:
+            filtro_quartos.click()
+            time.sleep(2)
 
     # ---------------------------------------------------------------- #
 
 
     # CLICA NOS FILTROS DE VALOR MAX E VALOR MIN #
-    filtro_valor_min = driver.find_element(By.XPATH, "//input[@id = 'price_min']")
-    filtro_valor_max = driver.find_element(By.XPATH, "//input[@id = 'price_max']")
+    def filtro_valores(self, valor_min, valor_max):
+        filtro_valor_min = self.driver.find_element(By.XPATH, "//input[@id = 'price_min']")
+        filtro_valor_max = self.driver.find_element(By.XPATH, "//input[@id = 'price_max']")
 
-    if filtro_valor_min:
-        filtro_valor_min.click()
-        filtro_valor_min.send_keys("3000")
-        time.sleep(2)
+        if filtro_valor_min:
+            filtro_valor_min.click()
+            filtro_valor_min.send_keys(valor_min)
+            time.sleep(2)
 
-    if filtro_valor_max:
-        filtro_valor_max.click()
-        filtro_valor_max.send_keys("4000")
-        time.sleep(2)
+        if filtro_valor_max:
+            filtro_valor_max.click()
+            filtro_valor_max.send_keys(valor_max)
+            time.sleep(2)
 
     # ---------------------------------------------------------------- #
 
     # CLICA NA PESQUISA APÓS FILTROS SEREM PREENCHIDOS #
+    def botao_pesquisa_final(self):
+            
+        botao_pesquisa_filtrado = self.driver.find_element(
+            By.XPATH,
+            "//button[@class = 'olx-core-button olx-core-button--primary olx-core-button--small olx-core-button--only-icon FilterButton_filterButton__1P_j9']",
+        )
+        botao_pesquisa_filtrado.click()
 
-    botao_pesquisa_filtrado = driver.find_element(
-        By.XPATH,
-        "//button[@class = 'olx-core-button olx-core-button--primary olx-core-button--small olx-core-button--only-icon FilterButton_filterButton__1P_j9']",
-    )
-    botao_pesquisa_filtrado.click()
-
-    time.sleep(5)
+        time.sleep(5)
 
     # ---------------------------------------------------------------- #
 
     # PEGA OS NOMES E VALORES DAS CASAS ENCONTRADAS #
+    def pegar_nomes_valores(self):
 
-    nomes_casas = driver.find_elements(By.XPATH, "//a[@class='olx-adcard__link']")
-    valores_casas = driver.find_elements(
-        By.XPATH, "//h3[@class = 'typo-body-large olx-adcard__price font-semibold']"
-    )
+        nomes_casas = self.driver.find_elements(By.XPATH, "//a[@class='olx-adcard__link']")
+        valores_casas = self.driver.find_elements(
+            By.XPATH, "//h3[@class = 'typo-body-large olx-adcard__price font-semibold']"
+        )
 
-    # ---------------------------------------------------------------- #
-
-
-    for nome, valor in zip(nomes_casas, valores_casas):
-        with open("precos.csv", "a", encoding="utf8") as arquivo:
-            arquivo.write(f"{nome.text.split()[0]},{"".join(valor.text.split())}\n") #{os.linesep} 
+        for nome, valor in zip(nomes_casas, valores_casas):
+            with open("precos.csv", "a", encoding="utf8") as arquivo:
+                arquivo.write(f"{nome.text.split()[0]},{"".join(valor.text.split())}\n") #{os.linesep} 
 
 
 client = MongoClient('mongodb://localhost:27017')
