@@ -32,22 +32,25 @@ class BuscarCasa:
         self.driver = webdriver.Chrome(options=options)
         self.driver.get("https://www.olx.com.br/estado-df")
         self.timeout = 10
-    # Montando XPATHs (identificadores de elementos)
+        self.wait = WebDriverWait(self.driver, self.timeout)
+        self.actions = ActionChains(self.driver)
+
 
     # EFETUA PESQUISA NA BARRA DA OLX #
     def pesquisa_inicial(self, busca):
         try:
             # Aguarda campo de pesquisa ficar clicável #
-            pesquisa = WebDriverWait(self.driver, self.timeout).until(
+            pesquisa = self.wait.until(
                 EC.element_to_be_clickable((By.XPATH,
                 "//input[@class='olx-core-input-textarea-element olx-core-input-element olx-core-input-textarea-element--default']")
                 )
             )
             pesquisa.clear()
             pesquisa.send_keys(busca)
-            pesquisa.send_keys(Keys.RETURN)
+            time.sleep(1)
+            pesquisa.submit()
 
-            WebDriverWait(self.driver, self.timeout).until(
+            self.wait.until(
                 EC.presence_of_element_located((
                 By.XPATH, "//div[contains(@class, 'result') or contains(@class, 'listing')]"
                 ))
@@ -90,33 +93,60 @@ class BuscarCasa:
             print('filtro "casas para alugar" clicado!')
 
             # Aguarda os resultados serem atualizados
-            WebDriverWait(self.driver, self.timeout).until(
+            self.wait.until(
                 EC.presence_of_element_located((
-                By.XPATH, "//div[contains(@class, 'result') or contains(@class, 'listing')]"
+                By.XPATH, "//div[contains(@class, 'listing') or contains(@class, 'result')]"
                 ))
             )
             return True
         
         except TimeoutException as e:
-            print(f'Timeout ao aplicar filtros: {e}')
+            print(f'Timeout ao aplicar filtros: porraaaaaaaaaaaaaaaaa {e}')
             return False
+        
         except Exception as e:
             print(f'Erro ao aplicar filtros: {e}')
             return False
 
-    # ---------------------------------------------------------------- #
-
-    # CLICA NO FILTRO RELATIVO À QUANTIDADE DE QUARTOS #
+        
     def filtrar_quartos(self):
+        try:
+            # Aguarda o elemento estar presente no DOM
+            filtro_quartos = self.wait.until(
+                EC.presence_of_element_located((
+                By.XPATH, "//label[@for = 'chips-id-rooms-3']" ))
+            )
+
+            # Scroll até o elemento para garantir visibilidade
+            self.actions.scroll_to_element(filtro_quartos).perform()
+            print('Scroll até o filtro de 3 quartos!')
+
+
+            # Aguarda elemento estar clicável
+            self.wait.until(
+                EC.element_to_be_clickable((
+                By.XPATH, "//label[@for = 'chips-id-rooms-3']" 
+                ))
+            )
+
+            # Verifica se está selecionado
+            # is_checked = filtro_quartos.get_attribute('checked')
+            # if is_checked:
+            #     print('Filtro de 3 quartos devidamente selecionado')
+            #     return True
             
-        filtro_quartos = self.driver.find_element(By.XPATH, "//label[@for = 'chips-id-rooms-3']")
-
-        ActionChains(self.driver).scroll_to_element(filtro_quartos).perform()
-        time.sleep(2)
-
-        if filtro_quartos:
             filtro_quartos.click()
+            print('filtro de 3 quartos aplicado')
+
             time.sleep(2)
+            return True
+        
+        except TimeoutException as e:
+            print(f'Timeout ao filtrar 3 quartos: {e}')
+            return False
+        except Exception as e:
+            print(f'Erro ao filtrar 3 quartos: {e}')
+            return False
 
     # ---------------------------------------------------------------- #
 
