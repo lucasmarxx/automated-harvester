@@ -202,16 +202,57 @@ class BuscarCasa:
 
     # PEGA OS NOMES E VALORES DAS CASAS ENCONTRADAS #
     def pegar_nomes_valores(self):
+        try:
+            nomes_casas = self.driver.find_elements(By.XPATH, "//a[@class='olx-adcard__link']")
+            valores_casas = self.driver.find_elements(
+                By.XPATH, "//h3[@class = 'typo-body-large olx-adcard__price font-semibold']"
+            )
+            # Verifica se encontrou elementos
+            if not nomes_casas:
+                print('Nenhum anúncio encontrado')
+                return []
 
-        nomes_casas = self.driver.find_elements(By.XPATH, "//a[@class='olx-adcard__link']")
-        valores_casas = self.driver.find_elements(
-            By.XPATH, "//h3[@class = 'typo-body-large olx-adcard__price font-semibold']"
-        )
+            anuncios = []
 
-        for nome, valor in zip(nomes_casas, valores_casas):
-            with open("precos.csv", "a", encoding="utf8") as arquivo:
-                arquivo.write(f"{nome.text.split()[0]},{"".join(valor.text.split())}\n") #{os.linesep} 
+            for i, (nome, valor) in enumerate(zip(nomes_casas, valores_casas), 1):
+                try:
+                    link = nome.get_attribute('href')
 
+                    nome_texto = nome.text.strip() if nome.text else 'Nome não encontrado'
+
+                    valor_texto = valor.text.strip() if valor.text else 'Valor não encontrado'
+
+                    anuncios.append({
+                    'numero': i,
+                    'nome': nome_texto,
+                    'valor': valor_texto,
+                    'link': link
+                })
+
+                    print(f'Anuncio {i}:')
+                    print(f'Nome: {nome_texto}')
+                    print(f'Valor: {valor_texto}')
+                    print(f'Link: {link}')
+
+                except Exception as e:
+                    print(f'ERRO AO PROCESSAR ANUNCIO {i}: {e}')
+                    continue
+            
+            print(f'{len(anuncios)} anuncios processados com sucesso.')
+            return anuncios
+        except Exception:
+            print(f'Erro ao pegar nomes e valores: {e}')
+            return []
+        
+
+
+            # self.driver.find_elements(By.XPATH, "//a[@class='olx-adcard__link']")
+
+            # for nome, valor in zip(nomes_casas, valores_casas):
+            #     with open("precos.csv", "a", encoding="utf8") as arquivo:
+            #         arquivo.write(f"{nome.text.split()[0]},{"".join(valor.text.split())}\n") #{os.linesep} 
+
+        
     def fechar(self):
         if self.driver:
             self.driver.quit()
@@ -222,11 +263,15 @@ if __name__ == '__main__':
     buscador = BuscarCasa()
 
     try:
-        buscador.pesquisa_inicial('') # BUSCA
+        buscador.pesquisa_inicial('ALUGUEL DE CASAS NO GAMA') # BUSCA
         buscador.filtro_casas()
         buscador.filtrar_quartos()
-        buscador.filtro_valores(0, 0) # VALORES
+        buscador.filtro_valores(2500, 4500) # VALORES
         buscador.botao_pesquisa_final()
+        anuncios = buscador.pegar_nomes_valores()
+        print('\n Links dos Anúncios: ')
+        for anuncio in anuncios:
+            print(f'Anúncio {anuncio['numero']}: {anuncio['link']}')
         
     except Exception as e:
         print(f'Erro geral: {e}')
