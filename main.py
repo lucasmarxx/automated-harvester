@@ -212,23 +212,47 @@ class BuscarCasa:
             with open("precos.csv", "a", encoding="utf8") as arquivo:
                 arquivo.write(f"{nome.text.split()[0]},{"".join(valor.text.split())}\n") #{os.linesep} 
 
+    def fechar(self):
+        if self.driver:
+            self.driver.quit()
+            print('navegador fechado!')
 
-client = MongoClient('mongodb://localhost:27017')
-db = client['Dados_OLX']
-colecao = db['colecao_busca_olx']
 
-with open('precos.csv', 'r', encoding = 'utf-8') as arquivo:
-    leitor = csv.reader(arquivo)
+if __name__ == '__main__':
+    buscador = BuscarCasa()
 
-    dados = []
-    for linha in leitor:
-        documento = {
-            'nome': linha[0],
-            'valor': linha[1]
-        }
-        dados.append(documento)
+    try:
+        buscador.pesquisa_inicial('') # BUSCA
+        buscador.filtro_casas()
+        buscador.filtrar_quartos()
+        buscador.filtro_valores(0, 0) # VALORES
+        buscador.botao_pesquisa_final()
+        
+    except Exception as e:
+        print(f'Erro geral: {e}')
 
-if dados:
-    colecao.insert_many(dados)
+    finally:
+        buscador.fechar()
 
-# input("") # para o site nao fechar imediatamente
+# Classe para integração com banco de dados
+
+class BancoDados:
+    def __init__(self):
+
+        client = MongoClient('mongodb://localhost:27017')
+        db = client['Dados_OLX']
+        colecao = db['colecao_busca_olx']
+
+        with open('precos.csv', 'r', encoding = 'utf-8') as arquivo:
+                    leitor = csv.reader(arquivo)
+        
+                    dados = []
+                    for linha in leitor:
+                        documento = {
+                            'nome': linha[0],
+                            'valor': linha[1]
+                        }
+                        dados.append(documento)
+        
+        if dados:
+            colecao.insert_many(dados)
