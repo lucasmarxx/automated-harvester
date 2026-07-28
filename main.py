@@ -138,7 +138,7 @@ class BuscarCasa:
             filtro_quartos.click()
             print('filtro de 3 quartos aplicado')
 
-            time.sleep(2)
+            time.sleep(1)
             return True
         
         except TimeoutException as e:
@@ -168,7 +168,7 @@ class BuscarCasa:
             time.sleep(1)
             filtro_valor_max.send_keys(valor_max)
             print(f'Valor maximo >>{valor_max}<< adicionado ao filtro')
-            time.sleep(10)
+            filtro_valor_max.submit()
             
         except TimeoutException as e:
             print(f'Timeout ao filtrar valor: {e}')
@@ -176,28 +176,6 @@ class BuscarCasa:
         except Exception as e:
             print(f'Erro ao filtrar valores: {e}')
 
-
-    # ---------------------------------------------------------------- #
-
-    # CLICA NA PESQUISA APÓS FILTROS SEREM PREENCHIDOS #
-    def botao_pesquisa_final(self):
-        try:    
-            botao_pesquisa_filtrado = self.wait.until(
-                EC.presence_of_element_located((
-                By.XPATH,
-                "//button[@class = 'olx-core-button olx-core-button--primary olx-core-button--small olx-core-button--only-icon FilterButton_filterButton__1P_j9']",
-                ))
-                )
-            botao_pesquisa_filtrado.click()
-            print('Botão de pesquisa clicado!!')
-            time.sleep(5)
-
-        except TimeoutException as e:
-            print(f'Timeout no botão de pesquisa: {e}')
-            return False
-        except Exception as e:
-            print(f'Erro no botão de pesquisa: {e}')
-            return False
     # ---------------------------------------------------------------- #
 
     # PEGA OS NOMES E VALORES DAS CASAS ENCONTRADAS #
@@ -246,12 +224,6 @@ class BuscarCasa:
         
 
 
-            # self.driver.find_elements(By.XPATH, "//a[@class='olx-adcard__link']")
-
-            # for nome, valor in zip(nomes_casas, valores_casas):
-            #     with open("precos.csv", "a", encoding="utf8") as arquivo:
-            #         arquivo.write(f"{nome.text.split()[0]},{"".join(valor.text.split())}\n") #{os.linesep} 
-
         
     def fechar(self):
         if self.driver:
@@ -261,18 +233,27 @@ class BuscarCasa:
 
 if __name__ == '__main__':
     buscador = BuscarCasa()
-
+    anuncios_links = []
+    anuncios_nomes = []
+    anuncios_valores = []
     try:
         buscador.pesquisa_inicial('ALUGUEL DE CASAS NO GAMA') # BUSCA
         buscador.filtro_casas()
         buscador.filtrar_quartos()
         buscador.filtro_valores(2500, 4500) # VALORES
-        buscador.botao_pesquisa_final()
-        anuncios = buscador.pegar_nomes_valores()
+        dados = buscador.pegar_nomes_valores()
+
         print('\n Links dos Anúncios: ')
-        for anuncio in anuncios:
-            print(f'Anúncio {anuncio['numero']}: {anuncio['link']}')
-        
+        for dado in dados:
+            anuncios_links.append(dado['link'])
+            anuncios_nomes.append(dado['nome'])
+            anuncios_valores.append(dado['valor'])
+            print(f'Anúncio {dado['numero']}: {dado['link']}')
+
+        for nome, valor, link in zip(anuncios_nomes, anuncios_valores, anuncios_links):
+            with open("precos.csv", "a", encoding="utf8") as arquivo:
+                arquivo.write(f"{nome.split()[0]},{"".join(valor.split())},{link}\n") #{os.linesep} 
+
     except Exception as e:
         print(f'Erro geral: {e}')
 
