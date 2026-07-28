@@ -22,9 +22,6 @@ import csv
 
 class BuscarCasa:
     def __init__(self):
-        self._busca = None
-        self._valor_min = None
-        self._valor_max = None
 
         options = Options()
         options.add_argument("--start-maximized")
@@ -231,8 +228,47 @@ class BuscarCasa:
             print('navegador fechado!')
 
 
+# Classe para integração com banco de dados
+
+class BancoDados:
+    def __init__(self):
+        try:
+            self.client = MongoClient('mongodb://localhost:27017')
+            self.db = self.client['Dados_OLX']
+            self.colecao = self.db['colecao_busca_olx']
+            print('conectado ao mongodb com sucesso')
+        except Exception as e:
+            print(f'erro ao conectar-se ao mongodb: {e}')
+
+    def integrar_bancos(self):
+        ...
+
+    def fechar_conexao(self):
+        if self.client:
+            self.client.close()
+            print('fechando conexao com mongodb!')
+    
+        # with open('precos.csv', 'r', encoding = 'utf-8') as arquivo:
+        #             leitor = csv.reader(arquivo)
+        
+        #             dados = []
+        #             for linha in leitor:
+        #                 documento = {
+        #                     'nome': linha[0],
+        #                     'valor': linha[1],
+        #                     'link': linha[2]
+        #                 }
+        #                 dados.append(documento)
+        
+        # if dados:
+        #     self.colecao.insert_many(dados)
+
+
+
 if __name__ == '__main__':
     buscador = BuscarCasa()
+    banco = BancoDados()
+
     anuncios_links = []
     anuncios_nomes = []
     anuncios_valores = []
@@ -242,7 +278,7 @@ if __name__ == '__main__':
         buscador.filtrar_quartos()
         buscador.filtro_valores(2500, 4500) # VALORES
         dados = buscador.pegar_nomes_valores()
-
+        banco.integrar_bancos()
         print('\n Links dos Anúncios: ')
         for dado in dados:
             anuncios_links.append(dado['link'])
@@ -252,33 +288,11 @@ if __name__ == '__main__':
 
         for nome, valor, link in zip(anuncios_nomes, anuncios_valores, anuncios_links):
             with open("precos.csv", "a", encoding="utf8") as arquivo:
-                arquivo.write(f"{nome.split()[0]},{"".join(valor.split())},{link}\n") #{os.linesep} 
+                arquivo.write(f'{nome.split()[0]},{"".join(valor.split())},{link}\n') #{os.linesep} 
 
     except Exception as e:
         print(f'Erro geral: {e}')
 
     finally:
         buscador.fechar()
-
-# Classe para integração com banco de dados
-
-class BancoDados:
-    def __init__(self):
-
-        client = MongoClient('mongodb://localhost:27017')
-        db = client['Dados_OLX']
-        colecao = db['colecao_busca_olx']
-
-        with open('precos.csv', 'r', encoding = 'utf-8') as arquivo:
-                    leitor = csv.reader(arquivo)
-        
-                    dados = []
-                    for linha in leitor:
-                        documento = {
-                            'nome': linha[0],
-                            'valor': linha[1]
-                        }
-                        dados.append(documento)
-        
-        if dados:
-            colecao.insert_many(dados)
+        banco.fechar_conexao()
