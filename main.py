@@ -164,6 +164,7 @@ class BuscarCasa:
             filtro_valor_max.send_keys(valor_maximo)
             print(f'Valor maximo >>{valor_maximo}<< adicionado ao filtro')
             filtro_valor_max.submit()
+            time.sleep(5)
             
         except TimeoutException as e:
             print(f'Timeout ao filtrar valor: {e}')
@@ -271,14 +272,15 @@ if __name__ == '__main__':
     anuncios_nomes = []
     anuncios_valores = []
     try:
-        buscador.pesquisa_inicial('ALUGUEL DE CASAS NO GAMA') # BUSCA
+        pesquisa = input('Digite a pesquisa: ')
+        buscador.pesquisa_inicial(pesquisa) # BUSCA
         buscador.filtro_casas()
         buscador.filtrar_quartos()
         
         filtro_valor_min = int(input('Digite um valor mínimo: '))
         filtro_valor_max = int(input('Digite um valor máximo: '))
-
         buscador.filtro_valores(filtro_valor_min, filtro_valor_max) # VALORES
+        
         dados = buscador.pegar_nomes_valores()
         banco.integrar_bancos()
         print('\n Links dos Anúncios: ')
