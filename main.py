@@ -22,7 +22,6 @@ import csv
 
 class BuscarCasa:
     def __init__(self):
-
         options = Options()
         options.add_argument("--start-maximized")
 
@@ -149,7 +148,7 @@ class BuscarCasa:
 
 
     # CLICA NOS FILTROS DE VALOR MAX E VALOR MIN #
-    def filtro_valores(self, valor_min, valor_max):
+    def filtro_valores(self, valor_minimo, valor_maximo):
         try:
             filtro_valor_min = self.wait.until(
                 EC.element_to_be_clickable((
@@ -159,12 +158,11 @@ class BuscarCasa:
                 EC.element_to_be_clickable((
                 By.XPATH, "//input[@id = 'price_max']"))
                 )
-
-            filtro_valor_min.send_keys(valor_min)
-            print(f'Valor mínimo >>{valor_min}<< adicionado ao filtro')
+            filtro_valor_min.send_keys(valor_minimo)
+            print(f'Valor mínimo >>{valor_minimo}<< adicionado ao filtro')
             time.sleep(1)
-            filtro_valor_max.send_keys(valor_max)
-            print(f'Valor maximo >>{valor_max}<< adicionado ao filtro')
+            filtro_valor_max.send_keys(valor_maximo)
+            print(f'Valor maximo >>{valor_maximo}<< adicionado ao filtro')
             filtro_valor_max.submit()
             
         except TimeoutException as e:
@@ -276,7 +274,11 @@ if __name__ == '__main__':
         buscador.pesquisa_inicial('ALUGUEL DE CASAS NO GAMA') # BUSCA
         buscador.filtro_casas()
         buscador.filtrar_quartos()
-        buscador.filtro_valores(2500, 4500) # VALORES
+        
+        filtro_valor_min = int(input('Digite um valor mínimo: '))
+        filtro_valor_max = int(input('Digite um valor máximo: '))
+
+        buscador.filtro_valores(filtro_valor_min, filtro_valor_max) # VALORES
         dados = buscador.pegar_nomes_valores()
         banco.integrar_bancos()
         print('\n Links dos Anúncios: ')
