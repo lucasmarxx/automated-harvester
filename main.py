@@ -196,17 +196,8 @@ class BuscarCasa:
 
                     valor_texto = valor.text.strip() if valor.text else 'Valor não encontrado'
 
-                    anuncios.append({
-                    'numero': i,
-                    'nome': nome_texto,
-                    'valor': valor_texto,
-                    'link': link
-                })
-
-                    print(f'Anuncio {i}:')
-                    print(f'Nome: {nome_texto}')
-                    print(f'Valor: {valor_texto}')
-                    print(f'Link: {link}')
+                    anuncios.append(link)
+                    
 
                 except Exception as e:
                     print(f'ERRO AO PROCESSAR ANUNCIO {i}: {e}')
