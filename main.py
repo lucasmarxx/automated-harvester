@@ -274,13 +274,16 @@ if __name__ == '__main__':
         
         dados = buscador.pegar_nomes_valores()
         banco.integrar_bancos()
-        print('\n Links dos Anúncios: ')
-        for dado in dados:
-            anuncios_links.append(dado['link'])
-            anuncios_nomes.append(dado['nome'])
-            anuncios_valores.append(dado['valor'])
-            print(f'Anúncio {dado['numero']}: {dado['link']}')
-
+        
+        # print('\n Links dos Anúncios: ')
+        # for dado in dados:
+        #     anuncios_links.append(dado['link'])
+        #     anuncios_nomes.append(dado['nome'])
+        #     anuncios_valores.append(dado['valor'])
+        #     print(f'Anúncio {dado['numero']}: {dado['link']}')
+        for i, dado in enumerate(dados):
+            print(f'{i}: {dado}')
+            
         for nome, valor, link in zip(anuncios_nomes, anuncios_valores, anuncios_links):
             with open("precos.csv", "a", encoding="utf8") as arquivo:
                 arquivo.write(f'{nome.split()[0]},{"".join(valor.split())},{link}\n') #{os.linesep} 
