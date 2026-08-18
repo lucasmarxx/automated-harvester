@@ -44,7 +44,7 @@ class BuscarCasa:
             pesquisa.clear()
             pesquisa.send_keys(busca)
             time.sleep(1)
-            pesquisa.submit()
+            pesquisa.send_keys(Keys.ENTER)
 
             self.wait.until(
                 EC.presence_of_element_located((
@@ -176,7 +176,6 @@ class BuscarCasa:
     # PEGA OS NOMES E VALORES DAS CASAS ENCONTRADAS #
     def pegar_nomes_valores(self):
         try:
-            time.sleep(5)
             nomes_casas = self.driver.find_elements(By.XPATH, "//a[@class='olx-adcard__link']")
             valores_casas = self.driver.find_elements(
                 By.XPATH, "//h3[@class = 'typo-body-large olx-adcard__price font-semibold']"
@@ -225,44 +224,11 @@ class BuscarCasa:
 
 # Classe para integração com banco de dados
 
-class BancoDados:
-    def __init__(self):
-        try:
-            self.client = MongoClient('mongodb://localhost:27017')
-            self.db = self.client['Dados_OLX']
-            self.colecao = self.db['colecao_busca_olx']
-            print('conectado ao mongodb com sucesso')
-        except Exception as e:
-            print(f'erro ao conectar-se ao mongodb: {e}')
-
-    def integrar_bancos(self):
-        ...
-
-    def fechar_conexao(self):
-        if self.client:
-            self.client.close()
-            print('fechando conexao com mongodb!')
-    
-        # with open('precos.csv', 'r', encoding = 'utf-8') as arquivo:
-        #             leitor = csv.reader(arquivo)
-        
-        #             dados = []
-        #             for linha in leitor:
-        #                 documento = {
-        #                     'nome': linha[0],
-        #                     'valor': linha[1],
-        #                     'link': linha[2]
-        #                 }
-        #                 dados.append(documento)
-        
-        # if dados:
-        #     self.colecao.insert_many(dados)
 
 
 
 if __name__ == '__main__':
     buscador = BuscarCasa()
-    banco = BancoDados()
 
     anuncios_links = []
     anuncios_nomes = []
@@ -276,9 +242,8 @@ if __name__ == '__main__':
         filtro_valor_min = int(input('Digite um valor mínimo: '))
         filtro_valor_max = int(input('Digite um valor máximo: '))
         buscador.filtro_valores(filtro_valor_min, filtro_valor_max) # VALORES
-        
+        time.sleep(5)
         dados = buscador.pegar_nomes_valores()
-        banco.integrar_bancos()
         
         for i, dado in enumerate(dados):
             print(f'{i+1}: {dado}')
@@ -292,4 +257,3 @@ if __name__ == '__main__':
 
     finally:
         buscador.fechar()
-        banco.fechar_conexao()
