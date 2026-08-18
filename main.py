@@ -163,7 +163,7 @@ class BuscarCasa:
             time.sleep(1)
             filtro_valor_max.send_keys(valor_maximo)
             print(f'Valor maximo >>{valor_maximo}<< adicionado ao filtro')
-            filtro_valor_max.submit()
+            filtro_valor_max.send_keys(Keys.ENTER)
             
         except TimeoutException as e:
             print(f'Timeout ao filtrar valor: {e}')
@@ -187,6 +187,20 @@ class BuscarCasa:
 
             anuncios = []
 
+            for i, (nome, valor) in enumerate(zip(nomes_casas, valores_casas), 1):
+                try:
+                    link = nome.get_attribute('href')
+
+                    nome_texto = nome.text.strip() if nome.text else 'Nome não encontrado'
+
+                    valor_texto = valor.text.strip() if valor.text else 'Valor não encontrado'
+                    
+                    anuncios.append(valor_texto)
+                    
+
+                except Exception as e:
+                    print(f'ERRO AO PROCESSAR ANUNCIO {i}: {e}')
+                    continue
             
             print(f'{len(anuncios)} anuncios processados com sucesso.')
             return anuncios
