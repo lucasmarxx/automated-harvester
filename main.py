@@ -7,15 +7,16 @@ from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.common.actions.wheel_input import ScrollOrigin
 from selenium.webdriver.common.action_chains import ActionChains
-from pymongo import MongoClient
+import customtkinter
+
+
 
 import time
 import os
 import csv
 
 # TODO
-# criação de classe
-# adicionar link das casas
+# criação de interface gráfica com (custom)tkinter que retorna graficamente os links e valores
 # adicionar função wait
 
 
@@ -125,11 +126,6 @@ class BuscarCasa:
                 ))
             )
 
-            # Verifica se está selecionado
-            # is_checked = filtro_quartos.get_attribute('checked')
-            # if is_checked:
-            #     print('Filtro de 3 quartos devidamente selecionado')
-            #     return True
             
             filtro_quartos.click()
             print('filtro de 3 quartos aplicado')
@@ -192,21 +188,7 @@ class BuscarCasa:
                 valor_texto = valor.text.strip()
                 anuncios.append(valor_texto)
 
-            # for i, (nome, valor) in enumerate(zip(nomes_casas, valores_casas), 1):
-            #     try:
-            #         link = nome.get_attribute('href')
 
-            #         nome_texto = nome.text.strip() if nome.text else 'Nome não encontrado'
-
-            #         valor_texto = valor.text.strip() if valor.text else 'Valor não encontrado'
-                    
-            #         anuncios.append(valor_texto)
-                    
-
-                # except Exception as e:
-                #     print(f'ERRO AO PROCESSAR ANUNCIO {i}: {e}')
-                #     continue
-            
             print(f'{len(anuncios)} anuncios processados com sucesso.')
             return anuncios
         except Exception:
@@ -221,8 +203,6 @@ class BuscarCasa:
             self.driver.quit()
             print('navegador fechado!')
 
-
-# Classe para integração com banco de dados
 
 
 
@@ -242,7 +222,7 @@ if __name__ == '__main__':
         filtro_valor_min = int(input('Digite um valor mínimo: '))
         filtro_valor_max = int(input('Digite um valor máximo: '))
         buscador.filtro_valores(filtro_valor_min, filtro_valor_max) # VALORES
-        time.sleep(5)
+        time.sleep(3)
         dados = buscador.pegar_nomes_valores()
         
         for i, dado in enumerate(dados):
