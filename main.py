@@ -176,31 +176,37 @@ class BuscarCasa:
     # PEGA OS NOMES E VALORES DAS CASAS ENCONTRADAS #
     def pegar_nomes_valores(self):
         try:
+            time.sleep(5)
             nomes_casas = self.driver.find_elements(By.XPATH, "//a[@class='olx-adcard__link']")
             valores_casas = self.driver.find_elements(
                 By.XPATH, "//h3[@class = 'typo-body-large olx-adcard__price font-semibold']"
             )
             # Verifica se encontrou elementos
+
             if not nomes_casas:
                 print('Nenhum anúncio encontrado')
                 return []
 
             anuncios = []
 
-            for i, (nome, valor) in enumerate(zip(nomes_casas, valores_casas), 1):
-                try:
-                    link = nome.get_attribute('href')
+            for valor in valores_casas:
+                valor_texto = valor.text.strip()
+                anuncios.append(valor_texto)
 
-                    nome_texto = nome.text.strip() if nome.text else 'Nome não encontrado'
+            # for i, (nome, valor) in enumerate(zip(nomes_casas, valores_casas), 1):
+            #     try:
+            #         link = nome.get_attribute('href')
 
-                    valor_texto = valor.text.strip() if valor.text else 'Valor não encontrado'
+            #         nome_texto = nome.text.strip() if nome.text else 'Nome não encontrado'
+
+            #         valor_texto = valor.text.strip() if valor.text else 'Valor não encontrado'
                     
-                    anuncios.append(valor_texto)
+            #         anuncios.append(valor_texto)
                     
 
-                except Exception as e:
-                    print(f'ERRO AO PROCESSAR ANUNCIO {i}: {e}')
-                    continue
+                # except Exception as e:
+                #     print(f'ERRO AO PROCESSAR ANUNCIO {i}: {e}')
+                #     continue
             
             print(f'{len(anuncios)} anuncios processados com sucesso.')
             return anuncios
