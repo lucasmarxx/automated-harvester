@@ -164,7 +164,6 @@ class BuscarCasa:
             filtro_valor_max.send_keys(valor_maximo)
             print(f'Valor maximo >>{valor_maximo}<< adicionado ao filtro')
             filtro_valor_max.submit()
-            time.sleep(5)
             
         except TimeoutException as e:
             print(f'Timeout ao filtrar valor: {e}')
@@ -188,20 +187,6 @@ class BuscarCasa:
 
             anuncios = []
 
-            for i, (nome, valor) in enumerate(zip(nomes_casas, valores_casas), 1):
-                try:
-                    link = nome.get_attribute('href')
-
-                    nome_texto = nome.text.strip() if nome.text else 'Nome não encontrado'
-
-                    valor_texto = valor.text.strip() if valor.text else 'Valor não encontrado'
-
-                    anuncios.append(link)
-                    
-
-                except Exception as e:
-                    print(f'ERRO AO PROCESSAR ANUNCIO {i}: {e}')
-                    continue
             
             print(f'{len(anuncios)} anuncios processados com sucesso.')
             return anuncios
@@ -275,18 +260,12 @@ if __name__ == '__main__':
         dados = buscador.pegar_nomes_valores()
         banco.integrar_bancos()
         
-        # print('\n Links dos Anúncios: ')
-        # for dado in dados:
-        #     anuncios_links.append(dado['link'])
-        #     anuncios_nomes.append(dado['nome'])
-        #     anuncios_valores.append(dado['valor'])
-        #     print(f'Anúncio {dado['numero']}: {dado['link']}')
         for i, dado in enumerate(dados):
-            print(f'{i}: {dado}')
-            
-        for nome, valor, link in zip(anuncios_nomes, anuncios_valores, anuncios_links):
+            print(f'{i+1}: {dado}')
+
+        for link in zip(dados):
             with open("precos.csv", "a", encoding="utf8") as arquivo:
-                arquivo.write(f'{nome.split()[0]},{"".join(valor.split())},{link}\n') #{os.linesep} 
+                arquivo.write(f'{link}\n') #{os.linesep} 
 
     except Exception as e:
         print(f'Erro geral: {e}')
