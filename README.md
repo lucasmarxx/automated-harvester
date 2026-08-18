@@ -8,11 +8,13 @@
 
 Entrar no site - OLX/Distrito Federal
 
+* gerar uma interface gráfica que faz as seguintes ações
+
 1. Fazer pesquisa de casas em X localidade;
 2. Filtrar para apenas CASAS;
 3. Filtrar quantidade de quartos;
 4. Filtrar o range de valores;
 5. Testar a resposta das buscas e filtros;
-6. Passar informações para um arquivo csv
-7. Tratar os dados para importação
-8. Importar informações em uma base de dados NoSQL (MongoDB)
+6. Retornar os dados;
+7. Dados importantes como valor e link demonstrados no frame da interface.
+8. -
