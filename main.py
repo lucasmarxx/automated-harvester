@@ -98,7 +98,7 @@ class BuscarCasa:
             return True
         
         except TimeoutException as e:
-            print(f'Timeout ao aplicar filtros: porraaaaaaaaaaaaaaaaa {e}')
+            print(f'Timeout ao aplicar filtros: {e}')
             return False
         
         except Exception as e:
